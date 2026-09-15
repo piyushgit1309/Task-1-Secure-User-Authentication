@@ -1,0 +1,20 @@
+[
+  {
+    "id": "usr_admin_001",
+    "fullName": "Admin User",
+    "email": "admin@prodigy.com",
+    "password": "pbkdf2$0edcb40d9f50ee35e36ea5baca41a0d0$9b8c91c722a90a5148518e95e6c525f6764803a75fcb02b3eb0275728b66980d2798baf8891ef4965a154d775f427c9fa9fd21805ca67890bdcbc323f180f025",
+    "role": "admin",
+    "createdAt": "2026-09-11T16:01:38.874Z",
+    "updatedAt": "2026-09-11T16:01:38.874Z"
+  },
+  {
+    "id": "usr_member_002",
+    "fullName": "Demo Member",
+    "email": "user@prodigy.com",
+    "password": "pbkdf2$7e39385ad48d5b3f845e509dbd0470f1$6b3a8ac7411a9c3d29889cfdf55f3951626fbb0e2f8a5750cca187ff1d4bdd191db182ad732c627f9e3c91174d81d3825763968b2fcbd2c3f8b0f3631f0c667d",
+    "role": "user",
+    "createdAt": "2026-09-11T16:01:38.884Z",
+    "updatedAt": "2026-09-11T16:01:38.884Z"
+  }
+]
