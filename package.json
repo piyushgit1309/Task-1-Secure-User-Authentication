@@ -1,0 +1,21 @@
+{
+  "name": "prodigy-wd-01-secure-auth-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vercel deployment entry for the secure authentication application",
+  "main": "TASK-1-Secure-User-Auth/server.js",
+  "scripts": {
+    "start": "node TASK-1-Secure-User-Auth/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

@@ -71,19 +71,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-const PORT = config.port;
-app.listen(PORT, () => {
-  console.log('\n=========================================================');
-  console.log('   PRODIGY INFOTECH - TASK 01: SECURE AUTHENTICATION     ');
-  console.log('=========================================================');
-  console.log(` Server running successfully in [${config.nodeEnv}] mode`);
-  console.log(` Local URL: http://localhost:${PORT}`);
-  console.log('---------------------------------------------------------');
-  console.log(' Demo Accounts Pre-configured:');
-  console.log('   Admin: admin@prodigy.com | Password: AdminPassword123!');
-  console.log('   User:  user@prodigy.com  | Password: UserPassword123!');
-  console.log('=========================================================\n');
-});
-
 module.exports = app;
+
+// Start a local server only when running this file directly.
+if (require.main === module) {
+  const PORT = config.port;
+  app.listen(PORT, () => {
+    console.log(`Server running in ${config.nodeEnv} mode at http://localhost:${PORT}`);
+  });
+}
