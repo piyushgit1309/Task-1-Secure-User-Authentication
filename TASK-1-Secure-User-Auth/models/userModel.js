@@ -13,6 +13,7 @@ try {
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
+let volatileUsers = null;
 
 const DEFAULT_USERS = [
   {
@@ -92,6 +93,10 @@ class UserModel {
   }
 
   getAll() {
+    if (volatileUsers) {
+      return volatileUsers.map(user => ({ ...user }));
+    }
+
     try {
       this.ensureStorage();
       const raw = fs.readFileSync(USERS_FILE, 'utf8');
@@ -103,7 +108,14 @@ class UserModel {
   }
 
   saveAll(users) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
+    try {
+      fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
+      volatileUsers = null;
+    } catch (error) {
+      // Keep the session usable when the serverless filesystem is read-only.
+      volatileUsers = users.map(user => ({ ...user }));
+      console.error('User changes are temporary in this deployment:', error.message);
+    }
   }
 
   findByEmail(email) {

@@ -51,7 +51,10 @@ const api = {
 
     try {
       const res = await fetch(endpoint, config);
-      const data = await res.json().catch(() => ({}));
+      const contentType = res.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await res.json().catch(() => ({}))
+        : { success: false, message: `Server returned an unexpected response (${res.status}).` };
       return {
         ok: res.ok,
         status: res.status,
