@@ -1,5 +1,5 @@
 const path = require('path');
-
+app.use(express.static(path.join(__dirname, 'public')));
 // Verify dependencies are installed
 try {
   require('express');
@@ -85,3 +85,5 @@ app.listen(PORT, () => {
   console.log('   User:  user@prodigy.com  | Password: UserPassword123!');
   console.log('=========================================================\n');
 });
+
+module.exports = app;
