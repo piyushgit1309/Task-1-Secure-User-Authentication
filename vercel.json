@@ -3,7 +3,13 @@
     "builds": [
         {
             "src": "TASK-1-Secure-User-Auth/server.js",
-            "use": "@vercel/node"
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": [
+                    "TASK-1-Secure-User-Auth/data/users.json",
+                    "TASK-1-Secure-User-Auth/public/**"
+                ]
+            }
         }
     ],
     "routes": [
