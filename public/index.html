@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prodigy InfoTech | Task-01: Secure User Authentication</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand" onclick="app.navigate('home')">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">PRODIGY INFOTECH</span>
+          <span class="brand-subtitle">Task-01: Secure Auth & RBAC</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-link active" data-view="home" onclick="app.navigate('home')">Home</button>
+        
+        <!-- Auth Dependent Navigation Links -->
+        <span id="guest-nav-links" class="nav-group">
+          <button class="nav-link" data-view="login" onclick="app.navigate('login')">Sign In</button>
+          <button class="btn btn-primary btn-sm" onclick="app.navigate('register')">Get Started</button>
+        </span>
+
+        <span id="user-nav-links" class="nav-group hidden">
+          <button class="nav-link" data-view="dashboard" onclick="app.navigate('dashboard')">User Dashboard</button>
+          <button id="admin-nav-link" class="nav-link nav-link-admin hidden" data-view="admin" onclick="app.navigate('admin')">
+            <span class="badge badge-admin">Admin Panel</span>
+          </button>
+          <div class="user-chip">
+            <span class="user-avatar" id="nav-user-avatar">U</span>
+            <span class="user-name" id="nav-user-name">User</span>
+            <span class="user-role-badge" id="nav-user-role">User</span>
+          </div>
+          <button class="btn btn-outline-danger btn-sm" onclick="auth.logout()">Sign Out</button>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- VIEW 1: HOME / OVERVIEW -->
+    <section id="view-home" class="view active">
+      <div class="hero-section">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span> Internship Assessment Deliverable
+        </div>
+        <h1 class="hero-title">
+          Secure User Authentication <br />
+          <span class="gradient-text">& Role-Based Access Control</span>
+        </h1>
+        <p class="hero-desc">
+          A full-stack, production-ready implementation of Task-01 for the Prodigy InfoTech Web Development Internship. Featuring cryptographic password hashing, JWT session token management, protected routing, and robust multi-tier RBAC authorization.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" onclick="app.navigate('register')">
+            Create Free Account
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="app.navigate('login')">
+            Sign In with Demo
+          </button>
+        </div>
+
+        <!-- Quick Demo Evaluator Cards -->
+        <div class="demo-card">
+          <div class="demo-header">
+            <div class="demo-icon">⚡</div>
+            <div>
+              <h3>Fast One-Click Demo Credentials</h3>
+              <p>Instantly populate login credentials to test protected views and role permissions.</p>
+            </div>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-box">
+              <div class="demo-role-tag admin">Administrator Account (Full Access)</div>
+              <div class="demo-credentials">
+                <code>admin@prodigy.com</code>
+                <code>AdminPassword123!</code>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="auth.prefillAndLogin('admin@prodigy.com', 'AdminPassword123!')">
+                Instant Log In as Admin
+              </button>
+            </div>
+
+            <div class="demo-box">
+              <div class="demo-role-tag user">Standard User Account (User Routes)</div>
+              <div class="demo-credentials">
+                <code>user@prodigy.com</code>
+                <code>UserPassword123!</code>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="auth.prefillAndLogin('user@prodigy.com', 'UserPassword123!')">
+                Instant Log In as User
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture Highlights -->
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon lock">🔒</div>
+            <h3>Password Hashing</h3>
+            <p>Passwords are never stored in plain text. Salting and cryptographic hashing (Bcrypt & PBKDF2) protect user credentials against rainbow table and brute-force attacks.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon key">🔑</div>
+            <h3>JWT Session Management</h3>
+            <p>Stateless JSON Web Tokens with cryptographically signed headers, expiration timestamps, and tamper protection for scalable session verification.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon shield">🛡️</div>
+            <h3>Role-Based Access (RBAC)</h3>
+            <p>Multi-tier authorization logic separates Standard Users from Administrators with middleware verification and fine-grained access control.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon check">✅</div>
+            <h3>Protected Endpoints</h3>
+            <p>Strict server-side validation rejects unauthorized queries (401 Unauthorized / 403 Forbidden) and secures all private APIs and dashboards.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- VIEW 2: LOGIN -->
+    <section id="view-login" class="view">
+      <div class="auth-card-container">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+            </div>
+            <h2>Sign In to Your Account</h2>
+            <p>Access your private dashboard and protected features.</p>
+          </div>
+
+          <div class="quick-select-bar">
+            <span>Quick Fill:</span>
+            <button type="button" class="chip-btn" onclick="auth.fillForm('login', 'admin@prodigy.com', 'AdminPassword123!')">Admin Demo</button>
+            <button type="button" class="chip-btn" onclick="auth.fillForm('login', 'user@prodigy.com', 'UserPassword123!')">User Demo</button>
+          </div>
+
+          <form id="login-form" onsubmit="auth.handleLogin(event)">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" id="login-email" required placeholder="name@example.com" autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="label-row">
+                <label for="login-password">Password</label>
+              </div>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password" />
+                <button type="button" class="btn-toggle-pw" onclick="auth.togglePasswordVisibility('login-password', this)">
+                  <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-login-submit" class="btn btn-primary btn-block">
+              <span>Sign In</span>
+            </button>
+          </form>
+
+          <div class="auth-card-footer">
+            <p>Don't have an account? <a href="#" onclick="app.navigate('register'); return false;">Register here</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- VIEW 3: REGISTER -->
+    <section id="view-register" class="view">
+      <div class="auth-card-container">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            </div>
+            <h2>Create New Account</h2>
+            <p>Sign up to test user registration and role assignments.</p>
+          </div>
+
+          <form id="register-form" onsubmit="auth.handleRegister(event)">
+            <div class="form-group">
+              <label for="reg-name">Full Name</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input type="text" id="reg-name" required placeholder="e.g. Piyush Gupta" autocomplete="name" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-email">Email Address</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" id="reg-email" required placeholder="name@example.com" autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-role">Assign Role (For RBAC Testing)</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <select id="reg-role">
+                  <option value="user" selected>Standard User (Access User Routes)</option>
+                  <option value="admin">Administrator (Access User + Admin Panel)</option>
+                </select>
+              </div>
+              <small class="form-hint">Choose 'Administrator' to test full admin control capabilities.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-password">Password</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" id="reg-password" required placeholder="Minimum 8 characters" autocomplete="new-password" oninput="auth.checkPasswordStrength(this.value)" />
+                <button type="button" class="btn-toggle-pw" onclick="auth.togglePasswordVisibility('reg-password', this)">
+                  <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+              <!-- Strength Bar -->
+              <div class="strength-meter-container">
+                <div class="strength-bar"><div id="strength-fill" class="strength-fill"></div></div>
+                <div id="strength-text" class="strength-text">Password strength</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-password-confirm">Confirm Password</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" id="reg-password-confirm" required placeholder="Re-enter your password" autocomplete="new-password" />
+              </div>
+            </div>
+
+            <button type="submit" id="btn-reg-submit" class="btn btn-primary btn-block">
+              <span>Complete Registration</span>
+            </button>
+          </form>
+
+          <div class="auth-card-footer">
+            <p>Already have an account? <a href="#" onclick="app.navigate('login'); return false;">Sign In</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- VIEW 4: PROTECTED USER DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="dashboard-container">
+        
+        <!-- Welcome Banner -->
+        <div class="dashboard-banner">
+          <div class="banner-left">
+            <div class="banner-avatar" id="dash-avatar">U</div>
+            <div>
+              <div class="banner-tag">Authenticated Session</div>
+              <h2 id="dash-welcome">Welcome back, User!</h2>
+              <p class="banner-sub" id="dash-email">user@example.com</p>
+            </div>
+          </div>
+          <div class="banner-right">
+            <div class="status-indicator">
+              <span class="status-pulse"></span>
+              <span>JWT Verified (24h validity)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="dash-grid">
+          <!-- Profile Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <div class="card-icon">👤</div>
+                <div>
+                  <h3>Account Credentials</h3>
+                  <p>Decrypted user token session metadata</p>
+                </div>
+              </div>
+              <span id="dash-role-badge" class="badge badge-user">User</span>
+            </div>
+            <div class="card-body">
+              <div class="meta-list">
+                <div class="meta-item">
+                  <span class="meta-label">Unique User ID</span>
+                  <span class="meta-val mono" id="dash-uid">usr_xxx</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Registered Name</span>
+                  <span class="meta-val" id="dash-name">User</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Email</span>
+                  <span class="meta-val" id="dash-email-val">user@example.com</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Account Created</span>
+                  <span class="meta-val" id="dash-created">Just now</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Status Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <div class="card-icon">🛡️</div>
+                <div>
+                  <h3>Security & Session Details</h3>
+                  <p>Client and server security parameters</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="meta-list">
+                <div class="meta-item">
+                  <span class="meta-label">Password Storage</span>
+                  <span class="meta-val badge-success-soft">Bcrypt / Salted PBKDF2</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Token Format</span>
+                  <span class="meta-val">RFC 7519 HMAC-SHA256</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Authorization Scheme</span>
+                  <span class="meta-val mono">Bearer &lt;JWT&gt; + HttpOnly Cookie</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Role Privilege</span>
+                  <span class="meta-val" id="dash-privilege-desc">Standard User Privileges</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Protected Route Sandbox -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon">🧪</div>
+              <div>
+                <h3>Interactive Protected Route Verification Tester</h3>
+                <p>Execute real requests to test backend authentication middleware and RBAC enforcement live.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tester-controls">
+              <button class="btn btn-outline" onclick="app.testRoute('/api/protected/dashboard')">
+                <span>GET /api/protected/dashboard</span>
+                <small>(Allowed for all authenticated)</small>
+              </button>
+              <button class="btn btn-outline" onclick="app.testRoute('/api/protected/profile')">
+                <span>GET /api/protected/profile</span>
+                <small>(Private Profile Route)</small>
+              </button>
+              <button class="btn btn-outline-danger" onclick="app.testRoute('/api/admin/stats')">
+                <span>GET /api/admin/stats</span>
+                <small>(Restricted to Admin Role Only)</small>
+              </button>
+            </div>
+
+            <!-- Response Terminal Output -->
+            <div class="terminal-box">
+              <div class="terminal-header">
+                <span class="term-dot red"></span>
+                <span class="term-dot yellow"></span>
+                <span class="term-dot green"></span>
+                <span class="term-title" id="terminal-title">Output Terminal - Ready</span>
+                <span class="term-status" id="terminal-badge">200 OK</span>
+              </div>
+              <pre id="terminal-output" class="terminal-body">// Click any test button above to send a request with your active JWT token...</pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- VIEW 5: PROTECTED ADMIN PANEL (RBAC) -->
+    <section id="view-admin" class="view">
+      <div class="dashboard-container">
+        
+        <!-- Admin Header -->
+        <div class="admin-header-box">
+          <div>
+            <div class="admin-badge-top">
+              <span>ADMINISTRATIVE ACCESS GRANTED</span>
+            </div>
+            <h2>System Control & User Management</h2>
+            <p>Restricted area accessible exclusively to users with the verified <code>admin</code> role.</p>
+          </div>
+          <div>
+            <button class="btn btn-secondary btn-sm" onclick="app.loadAdminData()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Refresh Data
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-title">Total Registered Users</span>
+            <span class="stat-value" id="stat-total-users">-</span>
+            <span class="stat-trend">Stored in persistent JSON DB</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Administrators</span>
+            <span class="stat-value text-purple" id="stat-admins">-</span>
+            <span class="stat-trend">Privileged RBAC status</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Standard Users</span>
+            <span class="stat-value text-blue" id="stat-members">-</span>
+            <span class="stat-trend">Standard dashboard access</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Security Firewall</span>
+            <span class="stat-value text-green">Active</span>
+            <span class="stat-trend">100% Endpoints Protected</span>
+          </div>
+        </div>
+
+        <!-- User Management Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon">👥</div>
+              <div>
+                <h3>Registered User Directory</h3>
+                <p>Modify roles (RBAC promotion/demotion) or safely revoke user accounts.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Account Created</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table-body">
+                  <tr>
+                    <td colspan="5" class="text-center py-4">Loading user directory...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>Prodigy InfoTech Internship</strong> &bull; Full Stack Web Development &bull; Task-01: Secure User Authentication
+      </div>
+      <div class="footer-meta">
+        Built with Node.js &bull; Express &bull; JWT &bull; Bcrypt &bull; Vanilla JS &amp; CSS3
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

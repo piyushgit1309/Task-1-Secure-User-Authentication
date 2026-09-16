@@ -65,56 +65,68 @@ function verifyPassword(plainPassword, storedHash) {
 
 class UserModel {
   constructor() {
+    this.inMemoryUsers = null;
     try {
       this.ensureStorage();
     } catch (error) {
-      console.error('User storage unavailable at startup; demo accounts remain available:', error.message);
+      console.warn('User disk storage unavailable; using in-memory store:', error.message);
     }
   }
 
   ensureStorage() {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    if (!fs.existsSync(USERS_FILE)) {
-      this.initDefaultData();
-    } else {
-      try {
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+      if (!fs.existsSync(USERS_FILE)) {
+        this.initDefaultData();
+      } else {
         const raw = fs.readFileSync(USERS_FILE, 'utf8');
         JSON.parse(raw);
-      } catch (err) {
-        this.initDefaultData();
       }
+    } catch (err) {
+      // Filesystem might be read-only in serverless environment
     }
   }
 
   initDefaultData() {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(DEFAULT_USERS, null, 2), 'utf8');
+    try {
+      fs.writeFileSync(USERS_FILE, JSON.stringify(DEFAULT_USERS, null, 2), 'utf8');
+    } catch (err) {
+      // Ignored for read-only environments
+    }
   }
 
   getAll() {
-    if (volatileUsers) {
-      return volatileUsers.map(user => ({ ...user }));
+    if (this.inMemoryUsers) {
+      return this.inMemoryUsers.map(user => ({ ...user }));
     }
 
     try {
-      this.ensureStorage();
-      const raw = fs.readFileSync(USERS_FILE, 'utf8');
-      return JSON.parse(raw || '[]');
+      if (fs.existsSync(USERS_FILE)) {
+        const raw = fs.readFileSync(USERS_FILE, 'utf8');
+        const parsed = JSON.parse(raw || '[]');
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.inMemoryUsers = parsed;
+          return parsed.map(user => ({ ...user }));
+        }
+      }
     } catch (error) {
-      console.error('User storage unavailable; using demo accounts:', error.message);
-      return DEFAULT_USERS.map(user => ({ ...user }));
+      // Fall through to DEFAULT_USERS
     }
+
+    this.inMemoryUsers = DEFAULT_USERS.map(user => ({ ...user }));
+    return this.inMemoryUsers.map(user => ({ ...user }));
   }
 
   saveAll(users) {
+    this.inMemoryUsers = users.map(user => ({ ...user }));
     try {
-      fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
-      volatileUsers = null;
+      if (fs.existsSync(DATA_DIR)) {
+        fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
+      }
     } catch (error) {
-      // Keep the session usable when the serverless filesystem is read-only.
-      volatileUsers = users.map(user => ({ ...user }));
-      console.error('User changes are temporary in this deployment:', error.message);
+      // Serverless environments operate safely in-memory
     }
   }
 
