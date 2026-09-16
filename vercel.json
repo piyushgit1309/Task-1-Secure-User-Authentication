@@ -2,11 +2,11 @@
     "version": 2,
     "builds": [
         {
-            "src": "TASK-1-Secure-User-Auth/server.js",
+            "src": "api/index.js",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
-                    "TASK-1-Secure-User-Auth/data/users.json",
+                    "TASK-1-Secure-User-Auth/data/**",
                     "TASK-1-Secure-User-Auth/public/**"
                 ]
             }
@@ -14,8 +14,12 @@
     ],
     "routes": [
         {
+            "src": "/api/(.*)",
+            "dest": "/api/index.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/TASK-1-Secure-User-Auth/server.js"
+            "dest": "/api/index.js"
         }
     ]
 }
